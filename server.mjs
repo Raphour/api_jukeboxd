@@ -95,7 +95,6 @@ async function fillUserAndReviews(){
             contentId: i,
             userId: i,
         });
-        console.log(review);
         await ratingDAO.add(review);
     }
 

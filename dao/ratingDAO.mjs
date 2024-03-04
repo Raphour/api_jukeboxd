@@ -1,5 +1,6 @@
 import {mongoose} from 'mongoose';
 import Rating from "../model/ratingModel.mjs";
+import autoIncrement from 'mongoose-auto-increment';
 
 const ratingSchema = new mongoose.Schema({
     grade : { type : Number, required : true},
@@ -8,6 +9,7 @@ const ratingSchema = new mongoose.Schema({
     contentId: { type : Number, required : true},
     userId: { type : Number, required : true},
 })
+ratingSchema.plugin(autoIncrement.plugin, { model: 'Ratings', field: 'id', startAt: 1 });
 const MongoRating = new mongoose.model("Ratings",ratingSchema)
 const ratingDAO = {
 
@@ -45,10 +47,12 @@ const ratingDAO = {
      */
     add: async (rating) => {
         if (!rating || !(rating instanceof Rating)) {
+            console.log('Not a valid rating');
             return 'Not a valid rating';
         }
         const existingRating = await MongoRating.findOne({ id: rating.id });
         if (existingRating) {
+            console.log('Rating already exists');
             return 'Rating already exists';
         }
         const newRating = new MongoRating(rating);

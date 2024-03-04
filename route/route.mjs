@@ -1,6 +1,7 @@
 "use strict"
 import express from 'express'
 import userController from '../controller/userController.mjs'
+import ratingController from '../controller/ratingController.mjs'
 import userDAO from "../dao/userDAO.mjs";
 const router = express.Router()
 
@@ -76,6 +77,10 @@ router
     .delete(async (req,res)=> {
         res.status(200).send({message: 'todo'})
     })
-
+router
+    .route('/rating')
+    .get(async (req, res) =>{
+        res.status(200).send(await ratingController.findAll())})
+    
 export default router
 
