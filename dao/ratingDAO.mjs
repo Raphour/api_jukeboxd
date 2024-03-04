@@ -2,70 +2,90 @@ import {mongoose} from 'mongoose';
 import Rating from "../model/ratingModel.mjs";
 
 const ratingSchema = new mongoose.Schema({
-    _id : {type : String, required: true, unique : true},
     grade : { type : Number, required : true},
     review : { type : String },
+    typeOfContent: { type : String, required : true},
+    contentId: { type : Number, required : true},
+    userId: { type : Number, required : true},
 })
 const MongoRating = new mongoose.model("Ratings",ratingSchema)
 const ratingDAO = {
-    // **Renvoie un tableau d'utilisateurs**
+
+    /**
+     * Find all ratings.
+     * @returns {Promise<Array<Rating>>} - Array of Rating objects.
+     */
     findAll: async () => {
         const data = await MongoRating.find({});
         return data.map((rating) => new Rating(rating));
     },
 
-    // **Supprime tous les utilisateurs**
+    /**
+     * Remove all ratings.
+     * @returns {Promise<void>}
+     */
     removeAll: async () => {
         await MongoRating.deleteMany();
     },
 
-    // **Renvoie un utilisateur connu par son login ou null**
+    /**
+     * Find a rating by ID.
+     * @param {string} id - The ID of the rating.
+     * @returns {Promise<Rating|null>} - The Rating object if found, null otherwise.
+     */
     findById: async (id) => {
         const rating = await MongoRating.findOne({ id });
         return rating ? new Rating(rating) : null;
     },
 
-    // **Ajoute un utilisateur si il est valide et n'existe pas**
-    // **Sinon "User already exists" ou "Not a valid user"**
+    /**
+     * Add a new rating.
+     * @param {Rating} rating - The Rating object to add.
+     * @returns {Promise<Rating|null>} - The added Rating object if successful, null otherwise.
+     */
     add: async (rating) => {
-
         if (!rating || !(rating instanceof Rating)) {
             return 'Not a valid rating';
         }
-
-        const existingUser = await MongoRating.findOne({ id: rating.id });
-        if (existingUser) {
+        const existingRating = await MongoRating.findOne({ id: rating.id });
+        if (existingRating) {
             return 'Rating already exists';
         }
-
-        const MongoRating = new MongoRating(user);
-        await MongoRating.save();
-        return new User(MongoRating);
+        const newRating = new MongoRating(rating);
+        await newRating.save();
+        return new Rating(newRating);
     },
 
-    // **Supprime un utilisateur connu par son login**
-    // **Renvoie true si la suppression fonctionne, false sinon**
-    removeByLogin: async (login) => {
-        const result = await MongoRating.deleteOne({ login });
+    /**
+     * Remove a rating by id.
+     * @param {string} id - The login of the rating to remove.
+     * @returns {Promise<boolean>} - True if the rating was successfully removed, false otherwise.
+     */
+    removeByLogin: async (id) => {
+        const result = await MongoRating.deleteOne({ id });
         return result.deletedCount === 1;
     },
 
-    // **Modifie un utilisateur**
-    // **Renvoie l'utilisateur modifié ou null**
-    update: async (user) => {
-        if (!user || !(user instanceof User)) {
-            return null
-        }
-
-        const existingUser = await MongoRating.findOne({ login: user.login });
-        if (!existingUser) {
+    /**
+     * Update a rating.
+     * @param {Rating} rating - The updated Rating object.
+     * @returns {Promise<Rating|null>} - The updated Rating object if successful, null otherwise.
+     */
+    update: async (rating) => {
+        if (!rating || !(rating instanceof Rating)) {
             return null;
         }
-
-        existingUser.login = user.login;
-        existingUser.password = user.password;
-        await existingUser.save();
-        return new User(existingUser);
+        const existingRating = await MongoRating.findOne({ id: rating.id });
+        if (!existingRating) {
+            return null;
+        }
+        existingRating.grade = rating.grade;
+        existingRating.review = rating.review;
+        await existingRating.save();
+        return new Rating(existingRating);
     },
 }
-export default ratingDAO
+
+export default ratingDAO;
+
+ 

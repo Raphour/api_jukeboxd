@@ -1,26 +1,32 @@
 export default class Rating {
+  //add timestamp attribute to the rating
+
   get grade() {
-    return this._grade;
+    return this.grade;
   }
 
   set grade(value) {
-    this._grade = value;
+    this.grade = value;
   }
 
   get review() {
-    return this._review;
+    return this.review;
   }
+
+
 
   
     constructor(obj) {
       // Extract and validate properties
-      const { id, grade, review, contentId, userId } = obj;
+      const {  grade, review, contentId, userId, typeOfContent } = obj;
   
-      if (!id || typeof id !== 'number') {
-        throw new TypeError('Invalid id: must be a number');
-      }
   
-      if (!grade || typeof grade !== 'number' || grade < 0 || grade > 5) {
+      if ( !Number.isInteger(grade) || grade < 0 || grade > 5) {
+        console.log(grade);
+        console.log(!Number.isInteger(grade));
+        console.log(grade < 0);
+        console.log(grade > 5);
+
         throw new TypeError('Invalid grade: must be a number between 0 and 5');
       }
   
@@ -29,16 +35,18 @@ export default class Rating {
       }
   
       if (!typeOfContent || typeof typeOfContent !== 'string' || (typeOfContent !== 'song' && typeOfContent !== 'album')) {
-        throw new TypeError('Invalid typeOfContent: must be "song" or "album"');
+        throw new TypeError('Invalid typeOfContent: must be "track" or "album"');
       }
   
       // Store validated data in properties
-      this.id = id;
-      this._grade = grade;
-      this._review = review || null;
-      this._typeOfContent = typeOfContent;
-      this._contentId = contentId;
-      this._userId = userId; 
+ 
+      this.grade = grade;
+      this.review = review || null;
+      this.typeOfContent = typeOfContent;
+      this.contentId = contentId;
+      this.userId = userId; 
+      //srt timestamp to the current date
+      this.timestamp = new Date();
     }
 
 

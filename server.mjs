@@ -11,7 +11,9 @@ import {mongoose} from 'mongoose';
 //import du framework express
 import express from 'express'
 import User from "./model/userModel.mjs";
+import Rating from "./model/ratingModel.mjs";
 import userDAO from "./dao/userDAO.mjs";
+import ratingDAO from "./dao/ratingDAO.mjs";
 
 
 //port serveur http
@@ -34,27 +36,11 @@ if (env==='TEST0') {
 } else {
     await mongoose.connect(mongoURL + '/' + mongoDB)
 
-    await userDAO.removeAll()
+    await userDAO.removeAll();
 
-    const users = [];
+    await fillUserAndReviews();
 
-    for (let i = 0; i < 10; i++) {
-        users.push({
-            username: `utilisateur${i + 1}`,
-            password: `motdepasse${i + 1}`,
-            email: `email${i + 1 }@mail.com`,
-            favoriteSongs : [], // initialize as an empty array
-            favoriteAlbums : [],
-            listenedSongs : [],
-            listenedAlbums : [],
-            toListenLater : [],
-            ratings : [], // initialize as an empty object
-            friendsList : [],
-        });
-    }
-    for(let i = 0; i<users.length;i++){
-        await userDAO.add(new User(users[i]))
-    }
+
 
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 }
@@ -82,6 +68,39 @@ for (let signal of ["SIGTERM", "SIGINT"])
             process.exit(err ? 1 : 0)
         });
     });
+async function fillUserAndReviews(){
+    for (let i = 0; i < 10; i++) {
+        const user = new User({
+            username: `utilisateur${i + 1}`,
+            password: `motdepasse${i + 1}`,
+            email: `email${i + 1 }@mail.com`,
+            favoriteSongs : [], // initialize as an empty array
+            favoriteAlbums : [],
+            listenedSongs : [],
+            listenedAlbums : [],
+            toListenLater : [],
+            ratings : [], // initialize as an empty object
+            friendsList : [],
+        });
+        await userDAO.add(user);
+    }
+
+    //add some review to the database 
+    for (let i = 0; i < 10; i++) {
+        console.log(i % 5)
+        const review = new Rating({
+            grade: i % 5,
+            review: `review${i}`,
+            typeOfContent: "song",
+            contentId: i,
+            userId: i,
+        });
+        console.log(review);
+        await ratingDAO.add(review);
+    }
+
+
+}
 
 
 export default server

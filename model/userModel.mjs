@@ -7,7 +7,6 @@ export default class User {
     listenedSongs = [];
     listenedAlbums = [];
     toListenLater = [];
-    ratings = []; // initialize as an empty object
     friendsList = [];
 
     constructor(obj) {
@@ -44,6 +43,16 @@ export default class User {
         if (friendsList && Array.isArray(friendsList)) {
             this.friendsList = friendsList;
         }
+
+        this.favoriteAlbums = favoriteAlbums;
+        this.favoriteSongs = favoriteSongs;
+        this.friendsList = friendsList;
+        this.toListenLater = toListenLater;
+        this.ratings = ratings;
+        this.listenedAlbums = listenedAlbums;
+        this.listenedSongs = listenedSongs;
+        
+
 
     }
 
