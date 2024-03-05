@@ -14,26 +14,25 @@ router
     .post(async (req, res) =>{
         const newUser = req.body;
 
-        if (!newUser || !newUser.login || !newUser.password) {
+        if (!newUser || !newUser.username || !newUser.password) {
             return res.status(400).send({ message: "not added" });
         }
 
         try {
-            const existingUser = await userController.findByLogin(newUser.login);
+            const existingUser = await userController.findByUsername(newUser.username);
 
             if (existingUser) {
-                return res.status(400).send({ message: "not added" });
+                return res.status(400).send({ message: "not added, user already exists" });
             }
             const createdUser = await userController.add(newUser);
             res.status(201).send(newUser);
         } catch (error) {
-
             res.status(500).send({ message: "Internal server error" });
         }
     })
     .put(async (req, res)=> {
         const updatedUser = req.body
-        if (!updatedUser || !updatedUser.login || !updatedUser.password) {
+        if (!updatedUser || !updatedUser.username || !updatedUser.password) {
             return res.status(400).send({ message: "Missing required fields" })
         }
         try {
@@ -49,12 +48,12 @@ router
     })
 
 router
-    .route('/user/:userid')
+    .route('/user/:username')
     .get(async (req, res) =>{
         // #swagger.summary = 'un résumé'
         // #swagger.description = 'une description'
-        console.log(req.params["userid"])
-        const user = await userController.findByLogin(req.params["userid"])
+        console.log(req.params["username"])
+        const user = await userController.findByusername(req.params["username"])
 
         if(user==null){
             console.log('Okay')
@@ -62,21 +61,19 @@ router
         }else{
             res.status(200).send(user)
         }})
-    .post(async (req, res) =>{
-        res.status(200).send({message: 'todo'})
-    })
-    .put(async (req, res)=> {
-        res.status(200).send({message: 'todo'})
-    })
-
-router
-    .route('/user/:login')
-    .get(async (req, res) =>{
-        res.status(200).send({message: 'todo'})
-    })
     .delete(async (req,res)=> {
-        res.status(200).send({message: 'todo'})
+        const user = await userController.remove(req.params["username"])
+        if (!user) {
+            res.status(404).send({ message: "User not found" })
+        } else {
+            res.status(200).send({ message: "User deleted" })
+        }
     })
+router
+    .route('/user/:username/ratings')
+    .get(async (req, res) =>{
+        res.status(200).send(await ratingController.findByUsername(req.params["username"]) )})
+
 router
     .route('/rating')
     .get(async (req, res) =>{

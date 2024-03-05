@@ -1,8 +1,10 @@
 import {mongoose} from 'mongoose';
 import User from "../model/userModel.mjs";
+import connexion from "../server.mjs";
+import autoIncrement from "mongoose-auto-increment";
 
 const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true }, // Unique login
+    username: { type: String, required: true, unique: true }, // Unique username
     password: { type: String, required: true },
     email: { type: String,  unique: true }, // Unique email
     favoriteSongs: [{ type: Number }], // Array of song IDs (reference to "Song" model)
@@ -17,6 +19,7 @@ const userSchema = new mongoose.Schema({
 
 
 const MongoUser = new mongoose.model("Users",userSchema)
+userSchema.plugin(autoIncrement.plugin, {model: 'Users', field: 'id', startAt: 1});
 const userDAO = {
     // **Renvoie un tableau d'utilisateurs**
     findAll: async () => {
@@ -29,8 +32,8 @@ const userDAO = {
         await MongoUser.deleteMany();
     },
 
-    // **Renvoie un utilisateur connu par son login ou null**
-    findByLogin: async (username) => {
+    // **Renvoie un utilisateur connu par son username ou null**
+    findByUsername: async (username) => {
         const user = await MongoUser.findOne({ username });
         return user ? new User(user) : null;
     },
@@ -53,10 +56,10 @@ const userDAO = {
         return new User(mongoUser);
     },
 
-    // **Supprime un utilisateur connu par son login**
+    // **Supprime un utilisateur connu par son username**
     // **Renvoie true si la suppression fonctionne, false sinon**
-    removeByLogin: async (login) => {
-        const result = await MongoUser.deleteOne({ login });
+    removeByusername: async (username) => {
+        const result = await MongoUser.deleteOne({ username : username });
         return result.deletedCount === 1;
     },
 
@@ -67,15 +70,18 @@ const userDAO = {
             return null
         }
 
-        const existingUser = await MongoUser.findOne({ login: user.login });
+        const existingUser = await MongoUser.findOne({ username: user.username });
         if (!existingUser) {
             return null;
         }
 
-        existingUser.login = user.login;
+        existingUser.username = user.username;
         existingUser.password = user.password;
         await existingUser.save();
         return new User(existingUser);
     },
+    
+
+
 }
 export default userDAO

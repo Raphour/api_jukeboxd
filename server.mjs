@@ -14,6 +14,7 @@ import User from "./model/userModel.mjs";
 import Rating from "./model/ratingModel.mjs";
 import userDAO from "./dao/userDAO.mjs";
 import ratingDAO from "./dao/ratingDAO.mjs";
+import autoIncrement from "mongoose-auto-increment";
 
 
 //port serveur http
@@ -34,6 +35,8 @@ if (env==='TEST0') {
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 
 } else {
+    export const  connexion = mongoose.createConnection(mongoURL + '/' + mongoDB)
+    autoIncrement.initialize(connexion)
     await mongoose.connect(mongoURL + '/' + mongoDB)
 
     await userDAO.removeAll();

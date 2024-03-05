@@ -3,14 +3,14 @@ import Rating from "../model/ratingModel.mjs";
 import autoIncrement from 'mongoose-auto-increment';
 
 const ratingSchema = new mongoose.Schema({
-    grade : { type : Number, required : true},
-    review : { type : String },
-    typeOfContent: { type : String, required : true},
-    contentId: { type : Number, required : true},
-    userId: { type : Number, required : true},
+    grade: {type: Number, required: true},
+    review: {type: String},
+    typeOfContent: {type: String, required: true},
+    contentId: {type: Number, required: true},
+    username: {type: String, required: true},
 })
-ratingSchema.plugin(autoIncrement.plugin, { model: 'Ratings', field: 'id', startAt: 1 });
-const MongoRating = new mongoose.model("Ratings",ratingSchema)
+ratingSchema.plugin(autoIncrement.plugin, {model: 'Ratings', field: 'id', startAt: 1});
+const MongoRating = new mongoose.model("Ratings", ratingSchema)
 const ratingDAO = {
 
     /**
@@ -36,9 +36,20 @@ const ratingDAO = {
      * @returns {Promise<Rating|null>} - The Rating object if found, null otherwise.
      */
     findById: async (id) => {
-        const rating = await MongoRating.findOne({ id });
+        const rating = await MongoRating.findOne({id});
         return rating ? new Rating(rating) : null;
     },
+
+    /**
+     * Find all ratings by user ID.
+     * @param {string} username - The ID of the user.
+     * @returns {Promise<Array<Rating>>} - Array of Rating objects.
+     */
+    findByUsername: async (username) => {
+        const data = await MongoRating.find({username : username});
+        return data.map((rating) => new Rating(rating));
+    },
+
 
     /**
      * Add a new rating.
@@ -50,7 +61,7 @@ const ratingDAO = {
             console.log('Not a valid rating');
             return 'Not a valid rating';
         }
-        const existingRating = await MongoRating.findOne({ id: rating.id });
+        const existingRating = await MongoRating.findOne({id: rating.id});
         if (existingRating) {
             console.log('Rating already exists');
             return 'Rating already exists';
@@ -66,7 +77,7 @@ const ratingDAO = {
      * @returns {Promise<boolean>} - True if the rating was successfully removed, false otherwise.
      */
     removeByLogin: async (id) => {
-        const result = await MongoRating.deleteOne({ id });
+        const result = await MongoRating.deleteOne({id});
         return result.deletedCount === 1;
     },
 
@@ -79,7 +90,7 @@ const ratingDAO = {
         if (!rating || !(rating instanceof Rating)) {
             return null;
         }
-        const existingRating = await MongoRating.findOne({ id: rating.id });
+        const existingRating = await MongoRating.findOne({id: rating.id});
         if (!existingRating) {
             return null;
         }
