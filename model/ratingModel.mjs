@@ -2,7 +2,7 @@ export default class Rating {
 
   constructor(obj) {
     // Extract and validate properties
-    const { grade, review, contentId, userId, typeOfContent } = obj;
+    const { id, grade, review, contentId, userId, typeOfContent } = obj;
 
 
     if (!Number.isInteger(grade) || grade < 0 || grade > 5) {
@@ -31,6 +31,7 @@ export default class Rating {
     this.userId = userId;
     //srt timestamp to the current date
     this.timestamp = new Date();
+    this.id = id
   }
 
 

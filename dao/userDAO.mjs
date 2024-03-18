@@ -1,9 +1,10 @@
 import {mongoose} from 'mongoose';
 import User from "../model/userModel.mjs";
-import connexion from "../server.mjs";
-import autoIncrement from "mongoose-auto-increment";
+import {ObjectId} from "mongodb";
+
 
 const userSchema = new mongoose.Schema({
+    id : {type : ObjectId,required : true, unique : true},
     username: { type: String, required: true, unique: true }, // Unique username
     password: { type: String, required: true },
     email: { type: String,  unique: true }, // Unique email
@@ -19,7 +20,9 @@ const userSchema = new mongoose.Schema({
 
 
 const MongoUser = new mongoose.model("Users",userSchema)
-userSchema.plugin(autoIncrement.plugin, {model: 'Users', field: 'id', startAt: 1});
+
+
+
 const userDAO = {
     // **Renvoie un tableau d'utilisateurs**
     findAll: async () => {

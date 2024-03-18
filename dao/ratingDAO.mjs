@@ -1,6 +1,6 @@
 import {mongoose} from 'mongoose';
 import Rating from "../model/ratingModel.mjs";
-import autoIncrement from 'mongoose-auto-increment';
+
 
 const ratingSchema = new mongoose.Schema({
     grade: {type: Number, required: true},
@@ -9,7 +9,7 @@ const ratingSchema = new mongoose.Schema({
     contentId: {type: Number, required: true},
     username: {type: String, required: true},
 })
-ratingSchema.plugin(autoIncrement.plugin, {model: 'Ratings', field: 'id', startAt: 1});
+
 const MongoRating = new mongoose.model("Ratings", ratingSchema)
 const ratingDAO = {
 

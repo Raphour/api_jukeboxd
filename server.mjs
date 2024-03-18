@@ -14,7 +14,8 @@ import User from "./model/userModel.mjs";
 import Rating from "./model/ratingModel.mjs";
 import userDAO from "./dao/userDAO.mjs";
 import ratingDAO from "./dao/ratingDAO.mjs";
-import autoIncrement from "mongoose-auto-increment";
+import {ObjectId} from "mongodb";
+
 
 
 //port serveur http
@@ -35,18 +36,17 @@ if (env==='TEST0') {
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 
 } else {
-    export const  connexion = mongoose.createConnection(mongoURL + '/' + mongoDB)
-    autoIncrement.initialize(connexion)
+    const  connexion = mongoose.createConnection(mongoURL + '/' + mongoDB)
+
     await mongoose.connect(mongoURL + '/' + mongoDB)
-
-    await userDAO.removeAll();
-
-    await fillUserAndReviews();
-
-
+    //
+    // await userDAO.removeAll();
+    //
+    // await fillUserAndReviews();
 
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 }
+
 //import de l'application
 
 const {default: app}  = await import ('./app.mjs')
@@ -74,6 +74,7 @@ for (let signal of ["SIGTERM", "SIGINT"])
 async function fillUserAndReviews(){
     for (let i = 0; i < 10; i++) {
         const user = new User({
+            id : new ObjectId(),
             username: `utilisateur${i + 1}`,
             password: `motdepasse${i + 1}`,
             email: `email${i + 1 }@mail.com`,

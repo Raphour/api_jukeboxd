@@ -1,4 +1,5 @@
 export default class User {
+    id;
     username;
     email;
     password;
@@ -12,7 +13,7 @@ export default class User {
     constructor(obj) {
 
         // Extract and validate required properties
-        const {  username,email, password, favoriteAlbums, favoriteSongs,friendsList,toListenLater,ratings,listenedAlbums,listenedSongs } = obj;
+        const {  id,username,email, password, favoriteAlbums, favoriteSongs,friendsList,toListenLater,ratings,listenedAlbums,listenedSongs } = obj;
 
         if (!username || typeof username !== 'string') {
             throw new TypeError(`Invalid username: must be a strin g${typeof username}`);
@@ -30,6 +31,7 @@ export default class User {
         this.username = username;
         this.password = password;
         this.email = email
+        this.id = id
 
         // Optional validation and initialization for other properties
         if (favoriteAlbums && Array.isArray(favoriteAlbums)) {

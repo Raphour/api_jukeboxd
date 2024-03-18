@@ -14,7 +14,7 @@
   "paths": {
     "/user": {
       "get": {
-        "summary": "un résumé",
+        "summary": "Obtenir la liste des utilisateurs",
         "description": "une description",
         "responses": {
           "200": {
@@ -23,6 +23,7 @@
         }
       },
       "post": {
+        "summary": "Ajouter un utilisateur",
         "description": "",
         "parameters": [
           {
@@ -58,6 +59,7 @@
         }
       },
       "put": {
+        "summary": "Mettre à jour un utilisateur",
         "description": "",
         "responses": {
           "200": {
@@ -69,9 +71,11 @@
         }
       }
     },
-    "/user/{login}": {
+    "/user/{username}": {
       "get": {
+        "summary": "Obtenir un user à partir d'un username",
         "description": "",
+
         "parameters": [
           {
             "name": "login",
@@ -90,10 +94,11 @@
         }
       },
       "delete": {
+        "summary": "Supprime un utilisteur à partir de son username",
         "description": "",
         "parameters": [
           {
-            "name": "login",
+            "name": "username",
             "in": "path",
             "required": true,
             "type": "string"
