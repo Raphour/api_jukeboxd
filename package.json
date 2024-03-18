@@ -17,6 +17,7 @@
     "mongodb-memory-server": "^9.1.6",
     "mongoose": "^8.2.1",
     "nodemon": "^3.1.0",
+    "swagger-js-codegen": "^1.13.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   }

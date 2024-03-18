@@ -25,7 +25,7 @@ router
                 return res.status(400).send({ message: "not added, user already exists" });
             }
             const createdUser = await userController.add(newUser);
-            res.status(201).send(newUser);
+            res.status(201).send(createdUser);
         } catch (error) {
             res.status(500).send({ message: "Internal server error" });
         }
@@ -53,7 +53,7 @@ router
         // #swagger.summary = 'un résumé'
         // #swagger.description = 'une description'
         console.log(req.params["username"])
-        const user = await userController.findByusername(req.params["username"])
+        const user = await userController.findByUsername(req.params["username"])
 
         if(user==null){
             console.log('Okay')

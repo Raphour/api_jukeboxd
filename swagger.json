@@ -15,7 +15,7 @@
     "/user": {
       "get": {
         "summary": "Obtenir la liste des utilisateurs",
-        "description": "une description",
+        "description": "",
         "responses": {
           "200": {
             "description": "OK"
@@ -33,19 +33,23 @@
             "schema": {
               "type": "object",
               "properties": {
-                "login": {
+                "username": {
                   "type": "string",
                   "example": "John"
                 },
                 "password": {
                   "type": "string",
-                  "example": "pass"
+                  "example": "1234"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email@example.com"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "user"
                 }
-              },
-              "required": [
-                "login",
-                "password"
-              ]
+              }
             }
           }
         ],
@@ -75,10 +79,9 @@
       "get": {
         "summary": "Obtenir un user à partir d'un username",
         "description": "",
-
         "parameters": [
           {
-            "name": "login",
+            "name": "username",
             "in": "path",
             "required": true,
             "type": "string"
@@ -107,6 +110,84 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/user/{login}/ratings": {
+      "get": {
+        "summary": "Obtenir les notes d'un utilisateur",
+        "description": "",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/user/{login}/rating": {
+      "post": {
+        "summary": "Ajouter la note d'un utilisateur à un contenu",
+        "description": "",
+        "parameters": [
+          {
+            "name": "login",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Some description...",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "grade": {
+                  "type": "integer",
+                  "example": "5"
+                },
+                "review": {
+                  "type": "string",
+                  "example": "Super musique !"
+                },
+                "typeOfContent": {
+                  "type": "string",
+                  "example": "track"
+                },
+                "contentId": {
+                  "type": "string",
+                  "example": "5e7f3e3e3e3e3e3e3e3e3e3e"
+                },
+                "username": {
+                  "type": "string",
+                  "example": "John"
+                }
+              },
+              "required": [
+                "grade",
+                "review"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
           },
           "400": {
             "description": "Bad Request"
