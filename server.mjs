@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 //import du client mongodb
-import {mongoose} from 'mongoose';
+import mongoose from 'mongoose';
 
 //import du framework express
 import express from 'express'
@@ -31,18 +31,18 @@ const env = (new URL(import.meta.url)).searchParams.get('ENV') ||process.env.ENV
 console.log(`env : ${env}`)
 
 //connexion à la BD
-if (env==='TEST0') {
-    await mongoose.connect(mongoURL + '/' + mongoDB)
+if (env === 'TEST') {
+    mongoose.connect(mongoURL + '/' + mongoDB).then(r =>    console.log("Mongo on "+ mongoURL + '/' + mongoDB))
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 
 } else {
-    const  connexion = mongoose.createConnection(mongoURL + '/' + mongoDB)
+    await mongoose.connect(mongoURL + '/' + mongoDB).then(r => console.log("Mongo on "+ mongoURL + '/' + mongoDB))
 
-    await mongoose.connect(mongoURL + '/' + mongoDB)
-    //
-    // await userDAO.removeAll();
-    //
-    // await fillUserAndReviews();
+
+
+    userDAO.removeAll().then(r => console.log("All users removed"));
+    ratingDAO.removeAll().then(r => console.log("All reviews removed"));
+    await fillUserAndReviews().then(r => console.log("Users and reviews added"));
 
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 }
@@ -54,8 +54,6 @@ const {default: app}  = await import ('./app.mjs')
 //lancement du serveur http
 const server = app.listen(serverPort, () =>
     console.log(`Example app listening on port ${serverPort}`)
-
-
 )
 
 

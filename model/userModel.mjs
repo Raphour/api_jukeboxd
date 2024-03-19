@@ -29,7 +29,9 @@ export default class User {
 
         // Store validated data in properties
         this.username = username;
-        this.password = password;
+        // Hash the password using sha256 and salt
+
+
         this.email = email
         this.id = id
 

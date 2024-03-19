@@ -54,17 +54,19 @@ const ratingDAO = {
     /**
      * Add a new rating.
      * @param {Rating} rating - The Rating object to add.
-     * @returns {Promise<Rating|null>} - The added Rating object if successful, null otherwise.
+     * @returns {Promise<Rating>} - The added Rating object if successful, null otherwise.
      */
     add: async (rating) => {
-        if (!rating || !(rating instanceof Rating)) {
+        const r = new Rating(rating);
+        if (!r || !(r instanceof Rating)) {
             console.log('Not a valid rating');
-            return 'Not a valid rating';
+            return undefined;
         }
-        const existingRating = await MongoRating.findOne({id: rating.id});
+        // find rating that have same contentId and username
+        const existingRating = await MongoRating.findOne({contentId: r.contentId, username: r.username});
         if (existingRating) {
             console.log('Rating already exists');
-            return 'Rating already exists';
+            return undefined;
         }
         const newRating = new MongoRating(rating);
         await newRating.save();

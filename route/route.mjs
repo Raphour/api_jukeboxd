@@ -70,14 +70,20 @@ router
         }
     })
 router
-    .route('/user/:username/ratings')
+    .route('/ratings/:username/')
     .get(async (req, res) =>{
-        res.status(200).send(await ratingController.findByUsername(req.params["username"]) )})
+        res.send(await ratingController.findByUsername(req.params["username"]) )}
+
+)
 
 router
-    .route('/rating')
+    .route('/ratings')
     .get(async (req, res) =>{
-        res.status(200).send(await ratingController.findAll())})
+        res.send(await ratingController.findAll())}
+    )
+    .post(async (req, res) => {
+    res.send(await ratingController.add(req.body))
+})
     
 export default router
 

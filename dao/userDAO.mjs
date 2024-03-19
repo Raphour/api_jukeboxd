@@ -49,10 +49,10 @@ const userDAO = {
             return 'Not a valid user';
         }
 
-        // const existingUser = await MongoUser.findOne({ username: user.username });
-        // if (existingUser) {
-        //     return 'User already exists';
-        // }
+        const existingUser = await this.findOne({ username: user.username });
+        if (existingUser) {
+            return 'User already exists';
+        }
 
         const mongoUser = new MongoUser(user);
         await mongoUser.save();

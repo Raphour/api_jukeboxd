@@ -2,7 +2,7 @@ export default class Rating {
 
   constructor(obj) {
     // Extract and validate properties
-    const { id, grade, review, contentId, userId, typeOfContent } = obj;
+    const { id, grade,timestamp, review, contentId, username, typeOfContent } = obj;
 
 
     if (!Number.isInteger(grade) || grade < 0 || grade > 5) {
@@ -18,7 +18,10 @@ export default class Rating {
       throw new TypeError('Invalid review: must be a string');
     }
 
-    if (!typeOfContent || typeof typeOfContent !== 'string' || (typeOfContent !== 'song' && typeOfContent !== 'album')) {
+    console.log(typeOfContent)
+    console.log(typeof typeOfContent)
+
+    if (!typeOfContent || typeof typeOfContent !== 'string' || (typeOfContent !== 'track' && typeOfContent !== 'album')) {
       throw new TypeError('Invalid typeOfContent: must be "track" or "album"');
     }
 
@@ -28,7 +31,7 @@ export default class Rating {
     this.review = review || null;
     this.typeOfContent = typeOfContent;
     this.contentId = contentId;
-    this.userId = userId;
+    this.username  = username;
     //srt timestamp to the current date
     this.timestamp = new Date();
     this.id = id

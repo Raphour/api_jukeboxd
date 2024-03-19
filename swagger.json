@@ -16,6 +16,9 @@
       "get": {
         "summary": "Obtenir la liste des utilisateurs",
         "description": "",
+        "tags": [
+          "user"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -25,6 +28,9 @@
       "post": {
         "summary": "Ajouter un utilisateur",
         "description": "",
+        "tags": [
+          "user"
+        ],
         "parameters": [
           {
             "name": "body",
@@ -65,6 +71,9 @@
       "put": {
         "summary": "Mettre à jour un utilisateur",
         "description": "",
+        "tags": [
+          "user"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -79,6 +88,9 @@
       "get": {
         "summary": "Obtenir un user à partir d'un username",
         "description": "",
+        "tags": [
+          "user"
+        ],
         "parameters": [
           {
             "name": "username",
@@ -99,6 +111,9 @@
       "delete": {
         "summary": "Supprime un utilisteur à partir de son username",
         "description": "",
+        "tags": [
+          "user"
+        ],
         "parameters": [
           {
             "name": "username",
@@ -117,10 +132,13 @@
         }
       }
     },
-    "/user/{login}/ratings": {
+    "/ratings/{username}/": {
       "get": {
         "summary": "Obtenir les notes d'un utilisateur",
         "description": "",
+        "tags": [
+          "ratings"
+        ],
         "parameters": [
           {
             "name": "login",
@@ -139,10 +157,13 @@
         }
       }
     },
-    "/user/{login}/rating": {
+    "/rating/{username}/": {
       "post": {
         "summary": "Ajouter la note d'un utilisateur à un contenu",
         "description": "",
+        "tags": [
+          "ratings"
+        ],
         "parameters": [
           {
             "name": "login",
@@ -194,6 +215,70 @@
           }
         }
       }
+    },
+    "/ratings": {
+      "get": {
+        "summary": "Obtenir toutes les notes",
+        "description": "",
+        "tags": [
+          "ratings"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "summary": "Ajouter une note",
+        "description": "",
+        "tags": [
+          "ratings"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Some description...",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "grade": {
+                  "type": "integer",
+                  "example": "5",
+                  "minimum": 0,
+                  "maximum": 5
+                },
+                "review": {
+                  "type": "string",
+                  "example": "Super musique !"
+                },
+                "typeOfContent": {
+                  "type": "string",
+                  "example": "track"
+                },
+                "contentId": {
+                  "type": "string",
+                  "example": "5e7f3e3e3e3e3e3e3e3e3e3e"
+                },
+                "username": {
+                  "type": "string",
+                  "example": "John"
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }
+
