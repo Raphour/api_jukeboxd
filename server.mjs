@@ -31,7 +31,7 @@ const env = (new URL(import.meta.url)).searchParams.get('ENV') ||process.env.ENV
 console.log(`env : ${env}`)
 
 //connexion à la BD
-if (env === 'TEST') {
+if (env !== 'TEST') {
     mongoose.connect(mongoURL + '/' + mongoDB).then(r =>    console.log("Mongo on "+ mongoURL + '/' + mongoDB))
     console.log("Mongo on "+ mongoURL + '/' + mongoDB)
 
@@ -89,13 +89,12 @@ async function fillUserAndReviews(){
 
     //add some review to the database 
     for (let i = 0; i < 10; i++) {
-        console.log(i % 5)
         const review = new Rating({
             grade: i % 5,
             review: `review${i}`,
-            typeOfContent: "song",
+            typeOfContent: "track",
             contentId: i,
-            userId: i,
+            username: i,
         });
         await ratingDAO.add(review);
     }

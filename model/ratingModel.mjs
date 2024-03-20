@@ -6,10 +6,6 @@ export default class Rating {
 
 
     if (!Number.isInteger(grade) || grade < 0 || grade > 5) {
-      console.log(grade);
-      console.log(!Number.isInteger(grade));
-      console.log(grade < 0);
-      console.log(grade > 5);
 
       throw new TypeError('Invalid grade: must be a number between 0 and 5');
     }
@@ -18,8 +14,6 @@ export default class Rating {
       throw new TypeError('Invalid review: must be a string');
     }
 
-    console.log(typeOfContent)
-    console.log(typeof typeOfContent)
 
     if (!typeOfContent || typeof typeOfContent !== 'string' || (typeOfContent !== 'track' && typeOfContent !== 'album')) {
       throw new TypeError('Invalid typeOfContent: must be "track" or "album"');

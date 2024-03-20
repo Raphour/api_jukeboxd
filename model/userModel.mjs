@@ -1,11 +1,14 @@
+import bcrypt from 'bcrypt';
+
 export default class User {
     id;
     username;
     email;
     password;
-    favoriteSongs = []; // initialize as an empty array
+    profile_picture_url;
+    favoriteTracks = []; // initialize as an empty array
     favoriteAlbums = [];
-    listenedSongs = [];
+    listenedTracks = [];
     listenedAlbums = [];
     toListenLater = [];
     friendsList = [];
@@ -13,7 +16,20 @@ export default class User {
     constructor(obj) {
 
         // Extract and validate required properties
-        const {  id,username,email, password, favoriteAlbums, favoriteSongs,friendsList,toListenLater,ratings,listenedAlbums,listenedSongs } = obj;
+        const {
+            id,
+            username,
+            email,
+            password,
+            favoriteAlbums,
+            favoriteTracks,
+            friendsList,
+            toListenLater,
+            ratings,
+            listenedAlbums,
+            listenedTracks,
+            profile_picture_url
+        } = obj;
 
         if (!username || typeof username !== 'string') {
             throw new TypeError(`Invalid username: must be a strin g${typeof username}`);
@@ -27,9 +43,12 @@ export default class User {
             throw new TypeError('Invalid password: must be a string');
         }
 
+        this.profile_picture_url = profile_picture_url || null;
+
         // Store validated data in properties
         this.username = username;
-        // Hash the password using sha256 and salt
+        // Hash the password using bcrypt
+        this.password = bcrypt.hashSync(password, 10);
 
 
         this.email = email
@@ -40,8 +59,8 @@ export default class User {
             this.favoriteAlbums = favoriteAlbums;
         }
 
-        if (favoriteSongs && Array.isArray(favoriteSongs)) {
-            this.favoriteSongs = favoriteSongs;
+        if (favoriteTracks && Array.isArray(favoriteTracks)) {
+            this.favoriteTracks = favoriteTracks;
         }
 
         if (friendsList && Array.isArray(friendsList)) {
@@ -49,23 +68,28 @@ export default class User {
         }
 
         this.favoriteAlbums = favoriteAlbums;
-        this.favoriteSongs = favoriteSongs;
+        this.favoriteTracks = favoriteTracks;
+
+
         this.friendsList = friendsList;
+
         this.toListenLater = toListenLater;
+
         this.ratings = ratings;
+
+
         this.listenedAlbums = listenedAlbums;
-        this.listenedSongs = listenedSongs;
-        
+        this.listenedTracks = listenedTracks;
 
 
     }
 
     // Add methods for user actions
-    addFavoriteSong(song) {
-        if (!song) {
+    addFavoriteTrack(track) {
+        if (!track) {
             throw new Error('Invalid song argument');
         }
-        this.favoriteSongs.push(song);
+        this.favoriteTracks.push(track);
     }
 
     addFavoriteAlbum(album) {
@@ -75,31 +99,33 @@ export default class User {
         this.favoriteAlbums.push(album);
     }
 
-    addToListened(item) {
+    addListenedAlbums(item) {
         if (!item) {
             throw new Error('Invalid item argument (song or album)');
         }
-        // Check if it's a song or album and add it to the respective list
-        if (typeof item["type"] ==='string' && item["type"]  === 'track') {
-            this.listenedSongs.push(item);
-        } else if (typeof item["type"]  ==='string' && item["type"]  === 'album') {
-            this.listenedAlbums.push(item);
-        } else {
-            throw new Error('Invalid item format (must be a song or album)');
-        }
+        this.listenedAlbums.push(item);
+
     }
 
-    addRating(rating){
-        if(typeof rating === 'object' && rating !== null){
+    addToListenedTracks(item) {
+        if (!item) {
+            throw new Error('Invalid item argument (song or album)');
+        }
+        this.listenedTracks.push(item);
+
+    }
+
+    addRating(rating) {
+        if (typeof rating === 'object' && rating !== null) {
             this.ratings.push(rating);
-        }else{
+        } else {
             throw new Error('Invalid rating argument');
         }
 
     }
 
-    addFriend(friendId){
-        if(!friendId){
+    addFriend(friendId) {
+        if (!friendId) {
             throw new Error('Invalid friendId argument');
         }
         this.friendsList.push(friendId)

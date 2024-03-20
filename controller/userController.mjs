@@ -9,6 +9,7 @@ const userController = {
     },
     add : async (user) => await userDAO.add(user),
     remove : async (username) => await userDAO.removeByusername(username),
-    update: async (user) => await userDAO.update(user)
+    update: async (user) => await userDAO.update(user),
+    addFriend: async (username, friendUsername) => await userDAO.addFriend(username, friendUsername)
 }
 export default userController
