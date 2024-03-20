@@ -84,6 +84,70 @@
         }
       }
     },
+    "/user/{username}/friend": {
+      "get": {
+        "summary": "Obtenir la liste des amis d'un user",
+        "description": "",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Ajouter un ami à la liste d'un user",
+        "description": "",
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Some description...",
+            "schema": {
+                "type": "object",
+                "properties": {
+                  "friendUsername": {
+                    "type": "string",
+                    "example": "username1"
+                  }
+                }
+              }
+            }
+
+        ],
+        "responses": {
+          "201": {
+            "description": "Added to friends"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+
+        }
+      }
+    },
     "/user/{username}": {
       "get": {
         "summary": "Obtenir un user à partir d'un username",
@@ -153,65 +217,6 @@
           },
           "404": {
             "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/rating/{username}/": {
-      "post": {
-        "summary": "Ajouter la note d'un utilisateur à un contenu",
-        "description": "",
-        "tags": [
-          "ratings"
-        ],
-        "parameters": [
-          {
-            "name": "login",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Some description...",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "grade": {
-                  "type": "integer",
-                  "example": "5"
-                },
-                "review": {
-                  "type": "string",
-                  "example": "Super musique !"
-                },
-                "typeOfContent": {
-                  "type": "string",
-                  "example": "track"
-                },
-                "contentId": {
-                  "type": "string",
-                  "example": "5e7f3e3e3e3e3e3e3e3e3e3e"
-                },
-                "username": {
-                  "type": "string",
-                  "example": "John"
-                }
-              },
-              "required": [
-                "grade",
-                "review"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
           }
         }
       }

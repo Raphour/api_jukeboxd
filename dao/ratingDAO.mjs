@@ -36,7 +36,7 @@ const ratingDAO = {
      * @returns {Promise<Rating|null>} - The Rating object if found, null otherwise.
      */
     findById: async (id) => {
-        const rating = await MongoRating.findOne({id});
+        const rating = await MongoRating.findOne({_id : id});
         return rating ? new Rating(rating) : null;
     },
 
@@ -78,7 +78,7 @@ const ratingDAO = {
      * @param {string} id - The login of the rating to remove.
      * @returns {Promise<boolean>} - True if the rating was successfully removed, false otherwise.
      */
-    removeByLogin: async (id) => {
+    removeById: async (id) => {
         const result = await MongoRating.deleteOne({id});
         return result.deletedCount === 1;
     },

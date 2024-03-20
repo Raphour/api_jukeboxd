@@ -5,6 +5,7 @@ import swaggerJson from './swagger.json' assert {type: 'json'};
 
 //pour lire le .env
 import dotenv from 'dotenv'
+import { createProxyMiddleware } from 'http-proxy-middleware';
 dotenv.config()
 //api path
 const APIPATH = process.env.API_PATH || '/api/v0'
@@ -24,6 +25,10 @@ app.use(express.json())
 
 //route pour swagger
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerJson))
+
+app.use('/deeznuts', createProxyMiddleware({ target: 'https://api.deezer.com', changeOrigin: true, pathRewrite: {'^/deeznuts' : '/'} }));
+
+
 
 //chargement des routes
 const {default: routes}  = await import ('./route/route.mjs')

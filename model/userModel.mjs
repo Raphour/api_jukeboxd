@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 
 export default class User {
-    id;
     username;
     email;
     password;
@@ -17,7 +16,6 @@ export default class User {
 
         // Extract and validate required properties
         const {
-            id,
             username,
             email,
             password,
@@ -52,7 +50,6 @@ export default class User {
 
 
         this.email = email
-        this.id = id
 
         // Optional validation and initialization for other properties
         if (favoriteAlbums && Array.isArray(favoriteAlbums)) {

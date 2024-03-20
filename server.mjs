@@ -72,7 +72,6 @@ for (let signal of ["SIGTERM", "SIGINT"])
 async function fillUserAndReviews(){
     for (let i = 0; i < 10; i++) {
         const user = new User({
-            id : new ObjectId(),
             username: `utilisateur${i + 1}`,
             password: `motdepasse${i + 1}`,
             email: `email${i + 1 }@mail.com`,
@@ -84,7 +83,7 @@ async function fillUserAndReviews(){
             ratings : [], // initialize as an empty object
             friendsList : [],
         });
-        await userDAO.add(user);
+        await userDAO.addUser(user);
     }
 
     //add some review to the database 
