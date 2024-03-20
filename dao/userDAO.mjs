@@ -5,6 +5,7 @@ import User from "../model/userModel.mjs";
 const userSchema = new mongoose.Schema({
     username: {type: String, required: true, unique: true}, // Unique username
     password: {type: String, required: true},
+    profile_picture_url: {type: String},
     email: {type: String, unique: true}, // Unique email
     favoriteTracks: [{type: Number}], // Array of song IDs (reference to "Song" model)
     favoriteAlbums: [{type: Number}], // Array of album IDs (reference to "Album" model)
@@ -93,7 +94,7 @@ const userDAO = {
      */
     addFriend: async (username, friendUsername) => {
         // Find the user and the friend in the database
-        const user = await MongoUser.findOne({username : username});
+        const user = await MongoUser.findOne({username: username});
         const friend = await MongoUser.findOne({username: friendUsername});
 
         // If either user does not exist, return an error message
@@ -119,7 +120,7 @@ const userDAO = {
      */
     findFriends: async (username) => {
         // Find the user in the database
-        const user = await MongoUser.findOne({username :  username});
+        const user = await MongoUser.findOne({username: username});
 
         // If the user does not exist, return an error message
         if (!user) {
@@ -191,11 +192,6 @@ const userDAO = {
         // Return the updated user document
         return new User(user);
     },
-
-
-
-
-
 
     // **Modifie un utilisateur**
     // **Renvoie l'utilisateur modifié ou null**

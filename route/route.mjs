@@ -3,6 +3,7 @@ import express from 'express'
 import userController from '../controller/userController.mjs'
 import ratingController from '../controller/ratingController.mjs'
 import userDAO from "../dao/userDAO.mjs";
+import contentInformationDAO from "../dao/contentInformationDAO.mjs";
 
 const router = express.Router()
 
@@ -114,6 +115,54 @@ router
         res.send(await ratingController.add(req.body))
     })
 
+router
+    .route('/content')
+    .get(async (req, res) => {
+        res.send(await contentInformationDAO.findAll())
+    })
+    .post(async (req, res) => {
+        res.send(await contentInformationDAO.add(req.body))
+    })
+    .delete(async (req, res) => {
+        res.send(await contentInformationDAO.removeAll())
+    })
+
+router.route('/content/:deezerId')
+    .get(async (req, res) => {
+        // #swagger.summary = 'Recupere les informations d'un contenu par son deezerId'
+        // #swagger.description = ''
+        res.send(await contentInformationDAO.findByDeezerId(req.params["deezerId"]))
+    })
+
+router.route('/content/:deezerId/listened')
+    // #swagger.summary = 'Recupere les utilisateurs ayant écouté un contenu'
+    .get(async (req, res) => {
+        res.send(await contentInformationDAO.findByDeezerId(req.params["deezerId"]["listened"]))
+    })
+
+router.route('/content/:deezerId/favorite')
+    .get(async (req, res) => {
+        // #swagger.summary = 'Recupere les utilisateurs ayant mis en favoris un contenu'
+        res.send(await contentInformationDAO.findByDeezerId(req.params["deezerId"]["favorites"]))
+    })
+
+router.route('/content/:deezerId/listened/:username')
+    .post(async (req, res) => {
+        // #swagger.summary = 'Ajoute un utilisateur à la liste des utilisateurs ayant écouté un contenu'
+        res.send(await contentInformationDAO.addListenedContent(req.params["deezerId"], req.params["username"]))
+    })
+    .delete(async (req, res) => {
+        // #swagger.summary = 'Retire un utilisateur de la liste des utilisateurs ayant écouté un contenu'
+        res.send(await contentInformationDAO.removeListenedContent(req.params["deezerId"], req.params["username"]))
+    })
+
+router.route('/content/:deezerId/favorite/:username')
+    .post(async (req, res) => {
+        res.send(await contentInformationDAO.addFavoriteContent(req.params["deezerId"], req.params["username"]))
+    })
+    .delete(async (req, res) => {
+        res.send(await contentInformationDAO.removeFavoriteContent(req.params["deezerId"], req.params["username"]))
+    })
 
 export default router
 
