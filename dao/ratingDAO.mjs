@@ -1,4 +1,4 @@
-import {mongoose} from 'mongoose';
+import mongoose from 'mongoose';
 import Rating from "../model/ratingModel.mjs";
 
 
@@ -36,7 +36,7 @@ const ratingDAO = {
      * @returns {Promise<Rating|null>} - The Rating object if found, null otherwise.
      */
     findById: async (id) => {
-        const rating = await MongoRating.findOne({_id : id});
+        const rating = await MongoRating.findOne({_id: id});
         return rating ? new Rating(rating) : null;
     },
 
@@ -45,8 +45,8 @@ const ratingDAO = {
      * @param {string} username - The ID of the user.
      * @returns {Promise<Array<Rating>>} - Array of Rating objects.
      */
-    findByUsername: async (username) => {
-        const data = await MongoRating.find({username : username});
+    findByUser: async (username) => {
+        const data = await MongoRating.find({username: username});
         return data.map((rating) => new Rating(rating));
     },
 
@@ -59,14 +59,12 @@ const ratingDAO = {
     add: async (rating) => {
         const r = new Rating(rating);
         if (!r || !(r instanceof Rating)) {
-            console.log('Not a valid rating');
-            return undefined;
+            throw new Error('Not a valid rating', {cause: "invalidRating"}
         }
         // find rating that have same contentId and username
         const existingRating = await MongoRating.findOne({contentId: r.contentId, username: r.username});
         if (existingRating) {
-            console.log('Rating already exists');
-            return undefined;
+            throw new Error("Rating already exists", {cause: "existingRating"});
         }
         const newRating = new MongoRating(rating);
         await newRating.save();

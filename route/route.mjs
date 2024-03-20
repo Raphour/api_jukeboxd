@@ -2,19 +2,24 @@
 import express from 'express'
 import userController from '../controller/userController.mjs'
 import ratingController from '../controller/ratingController.mjs'
-import userDAO from "../dao/userDAO.mjs";
 import contentInformationDAO from "../dao/contentInformationDAO.mjs";
+import UserNotFoundError from "../model/error/UserNotFoundError.mjs";
 
 const router = express.Router()
 
 router
     .route('/user')
     .get(async (req, res) => {
-        // #swagger.summary = 'un résumé'
-        // #swagger.description = 'une description'
+        // #swagger.summary = 'Obtenire la liste des utilisateurs'
+        // #swagger.description = 'Renvoie la liste des utilisateurs enregistrés dans la base de données.'
+        // #swagger.responses[200] = {description: 'Liste des utilisateurs récupérée avec succès.'}
+        // #swagger.tags = ['User']
         res.status(200).send(await userController.findAll())
     })
     .post(async (req, res) => {
+        // #swagger.summary = 'Ajouter un utilisateur'
+        // #swagger.description = 'Ajoute un utilisateur à la base de données.'
+        // #swagger.tags = ['User']
         const newUser = req.body;
 
         if (!newUser || !newUser.username || !newUser.password) {
@@ -34,8 +39,10 @@ router
         }
     })
     .put(async (req, res) => {
+        // swagger.summary = 'Mettre à jour un utilisateur'
+        // swagger.description = 'Met à jour un utilisateur dans la base de données.'
 
-
+        // #swagger.tags = ['User']
         const updatedUser = req.body
         if (!updatedUser || !updatedUser.username || !updatedUser.password) {
             return res.status(400).send({message: "Missing required fields"})
@@ -55,8 +62,9 @@ router
 router
     .route('/user/:username')
     .get(async (req, res) => {
-        // #swagger.summary = 'un résumé'
-        // #swagger.description = 'une description'
+        // #swagger.summary = 'Obtenire une utilisateur par son username'
+        // #swagger.description = 'Renvoie un utilisateur connu par son username.'
+        // #swagger.tags = ['User']
         console.log(req.params["username"])
         const user = await userController.findByUsername(req.params["username"])
 
@@ -68,6 +76,11 @@ router
         }
     })
     .delete(async (req, res) => {
+        // #swagger.summary = 'Supprimer un utilisateur'
+        // #swagger.description = 'Supprime un utilisateur de la base de données.'
+        // #swagger.responses[200] = {description: 'Utilisateur supprimé avec succès.'}
+        // #swagger.responses[404] = {description: 'Utilisateur non trouvé.'}
+        // #swagger.tags = ['User']
         const user = await userController.remove(req.params["username"])
         if (!user) {
             res.status(404).send({message: "User not found"})
@@ -79,52 +92,95 @@ router
 router
     .route('/user/:username/friend')
     .get(async (req, res) => {
+        // #swagger.summary = 'Obtenir la liste des amis d\'un utilisateur'
+        // #swagger.description = 'Renvoie la liste des amis d\'un utilisateur.'
+        // #swagger.tags = ['User']
+        // #swagger.responses[200] = {description: 'Liste des amis réculpérée avec succès.'}
+        // #swagger.responses[404] = {description: 'Utilisateur non trouvé.'}
 
-        const friendsList = await userController.findFriends(req.params["username"])
-
-        if (friendsList == null) {
-            res.status(404).send({message: "user not found"})
-        } else {
-            res.status(200).send(friendsList)
+        let friendsList = null
+        try {
+            friendsList = await userController.findFriends(req.params["username"])
+        } catch (error) {
+            if (error instanceof UserNotFoundError) {
+                return res.status(404).send({message: "User not found"})
+            } else {
+                return res.status(500).send({message: "Internal server error"})
+            }
         }
+        res.status(200).send(friendsList)
+
     })
     .post(async (req, res) => {
         console.log(req.params["username"])
         console.log(req.body["friendUsername"])
-        const user = await userController.addFriend(req.params["username"],req.body["friendUsername"])
-        if (!user) {
-            res.status(404).send({message: "User not found"})
-        } else {
-            res.status(200).send({message: "User added to friends list"})
+        let user = null
+
+        try {
+            user = await userController.addFriend(req.params["username"], req.body["friendUsername"])
+        } catch (error) {
+            if (error instanceof UserNotFoundError) {
+                return res.status(404).send({message: error.message})
+            } else {
+                return res.status(500).send({message: "Internal server error"})
+            }
         }
     })
 router
     .route('/ratings/:username/')
     .get(async (req, res) => {
-            res.send(await ratingController.findByUsername(req.params["username"]))
+            res.send(await ratingController.findByUser(req.params["username"]))
         }
     )
 
 router
     .route('/ratings')
     .get(async (req, res) => {
+        // #swagger.summary = 'Recupere la liste des notes'
+        // #swagger.description = 'Renvoie la liste des notes enregistrées dans la base de données.'
+        // #swagger.responses[200] = {description: 'Liste des notes récupérée avec succès.'}
+        // #swagger.tags = ['Rating']
+
             res.send(await ratingController.findAll())
         }
     )
     .post(async (req, res) => {
-        res.send(await ratingController.add(req.body))
-    })
+            // #swagger.summary = 'Ajouter une note'
+            // #swagger.description = 'Ajoute une note à la base de données.'
+            // #swagger.tags = ['Rating']
+            // #swagger.responses[201] = {description: 'Note ajoutée avec succès.'}
+            // #swagger.responses[400] = {description: 'Note invalide.'}
+            // #swagger.responses[400] = {description: 'Note déjà existante.'}
+            // #swagger.parameters['newRating']  = { in: 'body', description: 'Note à ajouter.', required: true, type: 'object', schema: { $ref: "#/definitions/Rating" } }
+            try {
+
+                res.status(201).send(await ratingController.add(req.body))
+            } catch (error) {
+                if (error.options.cause === "invalidRating") {
+                    res.status(400).send({message: "Invalid rating"})
+                } else if (error.options.cause === "existingRating") {
+                    res.status(400).send({message: "Rating already exists"})
+                }
+            }
+
+        }
+    )
 
 router
     .route('/content')
     .get(async (req, res) => {
+        // #swagger.summary = 'Recupere la liste des contenus'
+        // #swagger.description = 'Renvoie la liste des contenus enregistrés dans la base de données.'
+        // #swagger.responses[200] = {description: 'Liste des contenus récupérée avec succès.'}
+        // #swagger.tags = ['Content']
         res.send(await contentInformationDAO.findAll())
     })
     .post(async (req, res) => {
+        // #swagger.summary = 'Ajouter un contenu'
+        // #swagger.description = 'Ajoute un contenu à la base de données.'
+        // #swagger.tags = ['Content']
+        // #swagger.responses[201] = {description: 'Contenu ajouté avec succès.'}
         res.send(await contentInformationDAO.add(req.body))
-    })
-    .delete(async (req, res) => {
-        res.send(await contentInformationDAO.removeAll())
     })
 
 router.route('/content/:deezerId')

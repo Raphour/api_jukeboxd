@@ -27,9 +27,10 @@ const contentInformationDAO = {
     },
 
     add: async (contentInformation) => {
-        const c = new ContentInformation(contentInformation);
-        await c.save();
-        return c;
+
+            const c = new ContentInformation(contentInformation);
+            await c.save();
+            return c;
     },
 
     addListenedContent: async (deezerId, username) => {

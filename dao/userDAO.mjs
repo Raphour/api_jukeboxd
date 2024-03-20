@@ -98,8 +98,11 @@ const userDAO = {
         const friend = await MongoUser.findOne({username: friendUsername});
 
         // If either user does not exist, return an error message
-        if (!user || !friend) {
-            return 'User or friend not found';
+        if (!user) {
+            throw new Error("User not found", {"cause": "userNotFound"})
+        }
+        if (!friend) {
+            throw new Error("User not found", {"cause": "friendNotFound"})
         }
 
         // Add the friend's id to the user's friends list
@@ -124,7 +127,7 @@ const userDAO = {
 
         // If the user does not exist, return an error message
         if (!user) {
-            return 'User not found';
+            throw new UserNotFoundError('User not found')
         }
 
         // Retrieve the friends list of the user
