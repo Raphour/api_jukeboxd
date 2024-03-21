@@ -66,9 +66,9 @@ async function fillUserAndReviews() {
             username: `utilisateur${i + 1}`,
             password: `motdepasse${i + 1}`,
             email: `email${i + 1}@mail.com`,
-            favoriteSongs: [], // initialize as an empty array
+            favoriteTracks: [], // initialize as an empty array
             favoriteAlbums: [],
-            listenedSongs: [],
+            listenedTracks: [],
             listenedAlbums: [],
             toListenLater: [],
             ratings: [], // initialize as an empty object

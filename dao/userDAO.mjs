@@ -93,25 +93,9 @@ const userDAO = {
      * @throws {string} Will throw an error if either the user or the friend does not exist in the database.
      */
     addFriend: async (username, friendUsername) => {
-        // Find the user and the friend in the database
-        const user = await MongoUser.findOne({username: username});
-        const friend = await MongoUser.findOne({username: friendUsername});
+        await MongoUser.updateOne({username: username}, {$push: {friendsList: friendUsername}});
+        const user = await MongoUser.findOne({username: username})
 
-        // If either user does not exist, return an error message
-        if (!user) {
-            throw new Error("User not found", {"cause": "userNotFound"})
-        }
-        if (!friend) {
-            throw new Error("User not found", {"cause": "friendNotFound"})
-        }
-
-        // Add the friend's id to the user's friends list
-        user.friendsList.push(friend.username);
-
-        // Save the updated user document
-        await user.save();
-
-        // Return the updated user document
         return new User(user);
     },
 
@@ -127,7 +111,7 @@ const userDAO = {
 
         // If the user does not exist, return an error message
         if (!user) {
-            throw new UserNotFoundError('User not found')
+            throw new Error('User not found', {cause: "userNotFound"})
         }
 
         // Retrieve the friends list of the user
@@ -155,20 +139,28 @@ const userDAO = {
      * Add track to listened track.
      * @async
      * @param username
-     * @param songId
+     * @param trackId
      * @returns {Promise<User|string>}
      */
-    addListenedTrack: async (username, songId) => {
-        // Find the user in the database
-        const user = await MongoUser.findOne({username});
+    addListenedTrack: async (username, trackId) => {
+        await MongoUser.updateOne({username: username}, {$push: {listenedTracks: trackId}});
+    },
 
-        // If the user does not exist, return an error message
-        if (!user) {
-            return 'User not found';
+    removeListenedTrack: async (username, trackId) => {
+
+       MongoUser.updateOne({username: username}, {$pull: {listened: trackId}});
+
+    },
+
+
+    addFavoriteContent: async (username, contentType ,contentId) => {
+
+        if (contentType ==="track"){        // Add the song ID to the user's listened songs list
+            await MongoUser.updateOne({username: username}, {$push: {listened: contentId}});
+        }else if(contentType === "album"){
+            await MongoUser.updateOne({username: username}, {$push: {listened: contentId}});
         }
 
-        // Add the song ID to the user's listened songs list
-        user.addToListenedTracks(songId);
 
         // Save the updated user document
         await user.save();
@@ -177,23 +169,19 @@ const userDAO = {
         return new User(user);
     },
 
-    addFavoriteTrack: async (username, songId) => {
-        // Find the user in the database
-        const user = await MongoUser.findOne({username});
+    removeFavoriteContent: async (username, contentType, trackId) => {
 
-        // If the user does not exist, return an error message
-        if (!user) {
-            return 'User not found';
-        }
+            const user = await MongoUser.findOne({username: username});
+            if (!user) {
+                throw new Error('User not found', {cause: "userNotFound"})
+            }
 
-        // Add the song ID to the user's listened songs list
-        user.addFavoriteTrack(songId);
+            if (contentType === "track") {
+                user.favoriteTracks = user.favoriteTracks.filter((track) => track !== trackId);
+            } else if (contentType === "album") {
+                user.favoriteAlbums = user.favoriteAlbums.filter((album) => album !== trackId);
+            }
 
-        // Save the updated user document
-        await user.save();
-
-        // Return the updated user document
-        return new User(user);
     },
 
     // **Modifie un utilisateur**

@@ -9,7 +9,7 @@ const contentInformationSchema = new mongoose.Schema({
 });
 
 const MongoContentInformation = new mongoose.model("ContentInformation", contentInformationSchema)
-const MongoUser = new mongoose.model("Users", userSchema)
+// const MongoUser = new mongoose.model("Users", userSchema)
 
 const contentInformationDAO = {
     /**
@@ -27,10 +27,16 @@ const contentInformationDAO = {
     },
 
     add: async (contentInformation) => {
-
-            const c = new ContentInformation(contentInformation);
-            await c.save();
-            return c;
+            try {
+                const c = new ContentInformation(contentInformation);
+                await c.save();
+                return c;
+            }catch (e) {
+                if (e.name === 'ValidationError') {
+                    return 'Invalid content information';
+                }
+                console.error(e);
+            }
     },
 
     addListenedContent: async (deezerId, username) => {
@@ -50,7 +56,13 @@ const contentInformationDAO = {
     },
 
     findRatings: async (deezerId) => {
-        const contentInformation = await MongoContentInformation.find({deezerId: deezerId});
+        const contentInformation = await MongoContentInformation.findOne({deezerId: deezerId});
+        if (contentInformation.length === 0) {
+            return null;
+        }else{
+
+        }
+
         return contentInformation["ratings"] ? new ContentInformation(contentInformation) : null;
     },
 

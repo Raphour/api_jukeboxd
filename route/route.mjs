@@ -179,13 +179,23 @@ router
         // #swagger.description = 'Ajoute un contenu à la base de données.'
         // #swagger.tags = ['Content']
         // #swagger.responses[201] = {description: 'Contenu ajouté avec succès.'}
-        res.send(await contentInformationController.add(req.body))
+        // #swagger.responses[400] = {description: 'Contenu invalide.'}
+        try {
+            const result= res.send(await contentInformationController.add(req.body))
+            res.status(201).send(result)
+        }catch (error){
+            if(error instanceof TypeError){
+                res.status(400).send({message: "Invalid content"})
+            }
+        }
+
     })
 
 router.route('/content/:deezerId')
     .get(async (req, res) => {
         // #swagger.summary = 'Recupere les informations d'un contenu par son deezerId'
         // #swagger.description = ''
+        // #swagger.responses[200] = {description: 'Informations du contenu récupérées avec succès.'}
         res.send(await contentInformationController.findByDeezerId(req.params["deezerId"]))
     })
 
