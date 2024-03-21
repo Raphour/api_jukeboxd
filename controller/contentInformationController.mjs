@@ -10,5 +10,8 @@ const contentInformationController = {
     removeListenedContent: async (deezerId, username) => await contentInformationDAO.removeListenedContent(deezerId, username),
     addFavoriteContent: async (deezerId, username) => await contentInformationDAO.addFavoriteContent(deezerId, username),
     removeFavoriteContent: async (deezerId, username) => await contentInformationDAO.removeFavoriteContent(deezerId, username),
-    addRating: async (deezerId, username) => await contentInformationDAO.addRating(deezerId, username)
+    addRating: async (deezerId, username) => await contentInformationDAO.addRating(deezerId, username),
+    findRatings : async (deezerId) => await contentInformationDAO.findRatings(deezerId)
 }
+
+export default contentInformationController

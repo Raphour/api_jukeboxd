@@ -49,6 +49,11 @@ const contentInformationDAO = {
         await MongoContentInformation.updateOne({deezerId: deezerId}, {$pull: {favorites: username}});
     },
 
+    findRatings: async (deezerId) => {
+        const contentInformation = await MongoContentInformation.find({deezerId: deezerId});
+        return contentInformation["ratings"] ? new ContentInformation(contentInformation) : null;
+    },
+
     addRating: async (deezerId, username) => {
         await MongoContentInformation.updateOne({deezerId: deezerId}, {$push: {ratings: username}});
     },
